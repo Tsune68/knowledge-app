@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::group(['middleware' => 'guest'], function () {
+    Route::get('/slack/redirect', [App\Http\Controllers\OAuthController::class, 'redirect']);
+    Route::get('/slack/callback', [App\Http\Controllers\OAuthController::class, 'callback']);
+    Route::get('/login', [App\Http\Controllers\PostController::class, 'showLogin'])->name('login');
+});
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', [App\Http\Controllers\PostController::class, 'showTopPage'])->name('index');
+    Route::get('/logout', [App\Http\Controllers\UserController::class, 'logout'])->name('logout');
 });
