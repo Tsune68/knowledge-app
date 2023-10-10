@@ -15,7 +15,7 @@ class OAuthController extends Controller
     {
         $this->client_id = config('const.SLACK_CLIENT_ID');
         $this->client_secret = config('const.SLACK_CLIENT_SECRET');
-        $this->redirect_uri = 'https://localhost:443/slack/callback';
+        $this->redirect_uri = config('const.SLACK_REDIRECT_URI');
     }
 
     /**
@@ -55,7 +55,7 @@ class OAuthController extends Controller
 
         // id_token のリクエスト
         $client = new Client();
-        $res = $client->request('POST', "https://slack.com/api/openid.connect.token", [
+        $res = $client->request('POST', config('const.SLACK_API_URI'), [
             'form_params' => [
                 'client_id' => $this->client_id,
                 'client_secret' => $this->client_secret,
@@ -77,7 +77,6 @@ class OAuthController extends Controller
         // JWT の payload の取得
         $id_token = explode('.', $contents->id_token);
         $payload = json_decode(base64_decode($id_token[1]));
-        
 
         // nonce の検証
         $session_nonce = request()->session()->pull('nonce');
