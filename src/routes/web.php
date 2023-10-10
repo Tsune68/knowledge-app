@@ -23,4 +23,9 @@ Route::group(['middleware' => 'guest'], function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [App\Http\Controllers\PostController::class, 'showTopPage'])->name('index');
     Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function() {
+        Route::get('/', [App\Http\Controllers\UserController::class, 'showAllUsers'])->name('index');
+        Route::get('{id}', [App\Http\Controllers\UserController::class, 'findByUserId'])->name('show');
+    });
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,8 +22,6 @@ class User extends Authenticatable
         'email',
         'icon',
     ];
-
-
 
     /**
      * ユーザー新規登録
@@ -60,5 +59,29 @@ class User extends Authenticatable
     public function findUserByEmail(string $email): User
     {
         return $this->where('email', $email)->first();
+    }
+
+    /**
+     * 全てのユーザーを取得する。
+     *
+     * @return Collection
+     */
+    public function getAllUsers(): Collection
+    {
+        return User::all()->sortByDesc('created_at');
+    }
+
+    /**
+     * 特定のユーザーを取得
+     *
+     * @param integer $userId
+     * @return User
+     */
+    public function findByUserId(int $userId): User
+    {
+        $userDetail = $this->find($userId);
+        if (is_null($userDetail)) abort(404);
+
+        return $userDetail;
     }
 }
