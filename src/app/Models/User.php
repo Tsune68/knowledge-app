@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -83,5 +84,29 @@ class User extends Authenticatable
         if (is_null($userDetail)) abort(404);
 
         return $userDetail;
+    }
+
+    /**
+     * ログインユーザー削除
+     *
+     * @return void
+     */
+    public function deleteUser(): void
+    {
+        $this->destroy(Auth::id());
+    }
+
+    /**
+     * ユーザー名の更新
+     *
+     * @param integer $userId
+     * @param string $name
+     * @return void
+     */
+    public function updateUser(int $userId, string $name): void
+    {
+        $user = $this->findByUserId($userId);
+        $user->name = $name;
+        $user->save();
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller
 {
@@ -40,5 +42,34 @@ class UserController extends Controller
         $userInfo = $this->user->findByUserId($userId);
 
         return view('users.show', compact('userInfo'));
+    }
+
+    /**
+     * ユーザー削除
+     *
+     * @return RedirectResponse
+     */
+    public function deleteUser(): RedirectResponse {
+        $this->user->deleteUser();
+
+        return redirect()->route('login');
+    }
+
+    /**
+     * ユーザー名の更新
+     *
+     * @param integer $userId
+     * @param UpdateUserRequest $request
+     * @return RedirectResponse
+     */
+    public function  updateUser(int $userId, UpdateUserRequest $request): RedirectResponse 
+    {
+        if (Auth::id() !== $userId) {
+            abort(403);
+        }
+        $name = $request->name;
+        $this->user->updateUser($userId, $name);
+
+        return redirect()->route('users.show', ['id' => $userId])->with('flash_message', '更新しました');
     }
 }
